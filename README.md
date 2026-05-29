@@ -1,7 +1,8 @@
 ## Plasma Workspace
 
 this repo is an experimental PoC fork of [plasma-workspace](https://github.com/kde/plasma-workspace) from KDE that aims to add manual ordering of system-tray icons
-full details [here](https://github.com/fady5523/plasma-workspace-system-tray-manual-sort/blob/main/applets/systemtray/README.md)
+
+full details [here](./applets/systemtray/README.md)
 
 > **Note:** This implementation was Vibe Coded and only tested on Desktop and will not be updated further.
 
