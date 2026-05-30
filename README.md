@@ -4,6 +4,22 @@ full details [here](./applets/systemtray/README.md)
 
 > **Note:** This implementation was Vibe Coded and only tested on Desktop and will not be updated further.
 
+## Visuals
+
+Before:
+
+![before](stimages/1.png)
+
+After:
+
+![after1](stimages/2.png)
+![after1](stimages/3.png)
+
+Configuration Menu:
+
+![config1](stimages/4.png)
+
+![config2](stimages/5.png)
 ## Installation Guide
 
 ### 1. Clone the repository
