@@ -271,7 +271,3 @@ Opening a new application while the config page is open (and an entry is being d
 
 When dragging an applet, the visual indicator line that shows the insertion point gets desynced while scrolling. It currently drifts further away from the cursor the further you scroll, failing to track the scroll position correctly.
 
-### Multi-Tray Support
-
-The logic does not account for multi-monitor setups where the user may have independent system trays on each panel. The `manualOrder` setting is stored in a single shared kcfg entry — all system tray instances read and write the same list.
-
