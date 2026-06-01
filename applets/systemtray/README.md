@@ -12,9 +12,9 @@ Three kcfg entries under `[General]`:
 
 | Entry | Type | Default | Role |
 |---|---|---|---|
-| `manualOrder` | `StringList` | `[]` | Positional encoding: `["id_A", "id_C", "id_B"]` — lower index = closer to arrow in LTR |
+| `manualOrder` | `StringList` | `[]` | Positional encoding: `["id_A", "id_C", "id_B"]` — lower index = farther from arrow in LTR |
 | `orderingMode` | `String` | `"direction"` | `"direction"` = default category sort; `"custom"` = `ManualOrder` enum path |
-| `respectDirection` | `Bool` | `false` | `true` = Direction combo is respected (LayoutMirroring drives visual order); `false` = Windows-style, user order always maps LTR left-to-right regardless of panel orientation |
+| `respectDirection` | `Bool` | `false` | `true` = Windows-style, user order always maps LTR left-to-right regardless of panel orientation (by keeping the sort order fixed); `false` = Direction combo is respected (manually reversing the sort to match) |
 
 `KConfigLoader` auto-generates a `Settings` base class. `SystemTraySettings` wraps it:
 
@@ -95,23 +95,23 @@ bool SortedSystemTrayModel::lessThanManualOrder(
 
     if (respectDir) {
         // Ascending position sort.
-        // Visual direction is handled by QQuickGridView's layoutDirection property,
-        // which is set in QML via LayoutMirroring.
-        if (leftIdx == -1) return true;   // unknown items sort first (arrow-ward)
+        // Fixed left-to-right visual order because LayoutMirroring in QML
+        // does not affect QQuickGridView's internal cell order.
+        if (leftIdx == -1) return true;   // unknown items sort first (arrow-distal in LTR)
         if (rightIdx == -1) return false;
         return leftIdx < rightIdx;
     } else {
-        // Direction-independent sort (Windows-style).
+        // Direction-dependent sort (Direction combo is respected).
         // QQuickGridView overrides layoutDirection() with its own m_layoutDirection
         // member — LayoutMirroring in QML DOES NOT affect GridView cell order.
         //
         // LTR panel w/ arrow on right:
-        //   [col0](arrow-ward) ... [colN](arrow-distal) [▲]
+        //   [col0](arrow-distal) ... [colN](arrow-ward) [▲]
         //
         // RTL panel w/ arrow on left:
         //   [▲] [col0](arrow-ward) ... [colN](arrow-distal)
         //
-        // Cell 0 is always arrow-ward in GridView coordinates.
+        // Cell 0 is on the left (arrow-distal in LTR, arrow-ward in RTL).
         // When reverseIconOrder=true (RTL), we must reverse the sort so that
         // manualOrder[0] ends up farthest from the arrow visually.
         const bool reversed = m_settings && m_settings->reverseIconOrder();
@@ -174,7 +174,7 @@ void SystemTray::ensureManualOrderContainsAllItems() {
         QString id = model->index(i, 0)
             .data(static_cast<int>(BaseModel::BaseRole::ItemId)).toString();
         if (!order.contains(id)) {
-            order.prepend(id);  // new items appear first (arrow-ward)
+            order.prepend(id);  // new items appear first (arrow-distal in LTR)
             changed = true;
         }
     }
@@ -245,7 +245,7 @@ function commitReorder(fromIndex: int, gapIndex: int): void {
 }
 ```
 
-The `adjustedGap` correction: after `splice(fromIndex, 1)`, all entries above `fromIndex` shift left by one position. If the target gap was above the removed index, we subtract 1 to account for the shift. The result is that the dropped entry lands **above** the drop line (the line marks the top edge of the entry at `gapIndex`).
+The `adjustedGap` correction: after `splice(fromIndex, 1)`, all entries after `fromIndex` shift left by one position. If the target gap was below/after the removed index (moving an item downwards), we subtract 1 to account for the shift. The result is that the dropped entry lands **above** the drop line (the line marks the top edge of the entry at `gapIndex`).
 
 ### Auto-Scroll
 
