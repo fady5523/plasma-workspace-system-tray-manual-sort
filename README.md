@@ -1,3 +1,6 @@
+# An MR has already been submitted to add this feature to KDE Plasma, and it is way more functional and less buggy than this one. If you want to test it, it's available [here](https://invent.kde.org/plasma/plasma-workspace/-/merge_requests/6958).
+
+
 This repo is an experimental PoC fork of [plasma-workspace](https://github.com/kde/plasma-workspace) from KDE that aims to add manual ordering of system-tray icons
 
 full details [here](./applets/systemtray/README.md)
